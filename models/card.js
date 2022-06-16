@@ -9,14 +9,14 @@ const cardSchema = new mongoose.Schema({
   },
   link: {
     type: String,
-    required: true,
+    required: true
   },
   owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
+    type: mongoose.Schema.ObjectId,
+    required: true
   },
   likes: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Array,
     default: []
   },
   createdAt: {

@@ -14,7 +14,7 @@ module.exports.findAllUser = (req, res) => {
 };
 
 module.exports.findByIdUser = (req, res) => {
-  User.findById(req.params.id)
+  User.findById(req.params.userId)
     .then(user => res.status(200).send({ data: user }))
     .catch(err => res.status(500).send({message: 'Произошла ошибка'}))
 };

@@ -28,13 +28,13 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res.status(ERROR_CODE_VALID).send({ message: 'Карточка не найдена' });
+        return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
       return res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
+        return res.status(ERROR_CODE_VALID).send({ message: 'Карточка не найдена' });
       }
       return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });
@@ -48,13 +48,13 @@ module.exports.addLike = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(ERROR_CODE_VALID).send({ message: 'Карточка не найдена' });
+        return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
       return res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
+        return res.status(ERROR_CODE_VALID).send({ message: 'Карточка не найдена' });
       }
       return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });
@@ -68,13 +68,13 @@ module.exports.deleteLike = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(ERROR_CODE_VALID).send({ message: 'Карточка не найдена' });
+        return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
       return res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
+        return res.status(ERROR_CODE_VALID).send({ message: 'Карточка не найдена' });
       }
       return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });

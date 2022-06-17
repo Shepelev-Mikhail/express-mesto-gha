@@ -1,10 +1,11 @@
 const Card = require('../models/card');
 const { ERROR_CODE_VALID, ERROR_CODE_NOT_FOUND, ERROR_CODE_DEFAULT } = require('../error');
 
+// создание карточки
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(200).send({ data: card }))
+    .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_VALID).send({ message: 'Переданы некорректные данные' });
@@ -13,9 +14,10 @@ module.exports.createCard = (req, res) => {
     });
 };
 
+// найти все карточки
 module.exports.findAllCard = (req, res) => {
   Card.find({})
-    .then((cards) => res.status(200).send({ data: cards }))
+    .then((cards) => res.status(200).send(cards))
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
@@ -24,13 +26,14 @@ module.exports.findAllCard = (req, res) => {
     });
 };
 
+// удалить карточку
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
-      return res.send({ data: card });
+      return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -40,6 +43,7 @@ module.exports.deleteCard = (req, res) => {
     });
 };
 
+// поставить лайк
 module.exports.addLike = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -50,7 +54,7 @@ module.exports.addLike = (req, res) => {
       if (!card) {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
-      return res.send({ data: card });
+      return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -60,6 +64,7 @@ module.exports.addLike = (req, res) => {
     });
 };
 
+// удалить лайк
 module.exports.deleteLike = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -70,7 +75,7 @@ module.exports.deleteLike = (req, res) => {
       if (!card) {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
-      return res.send({ data: card });
+      return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {

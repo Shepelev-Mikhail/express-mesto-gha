@@ -9,9 +9,11 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
+// прием данных
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// захардокили id пользователя
 app.use((req, res, next) => {
   req.user = {
     _id: '62ab819167cafe22de0f3664',
@@ -20,14 +22,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// подключение роутов
 app.use('/', routerUser);
 app.use('/', routerCard);
 
+// роут на несуществующую страницу
 app.use((req, res, next) => {
   res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Page not found' });
   next();
 });
 
+// подключение монгоДБ
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
 });

@@ -1,21 +1,66 @@
-const Card = require('../models/card')
+const Card = require('../models/card');
+const { ERROR_CODE_VALID, ERROR_CODE_NOT_FOUND, ERROR_CODE_DEFAULT, defaultError } = require('../error');
 
 module.exports.createCard = (req, res) => {
-  // console.log(req.user._id);
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then(card => res.status(200).send({data: card}))
-    .catch(err => res.status(500).send({message: 'Произошла ошибка'}))
+    .catch((err) => {
+      if(err.name === "validationError") {
+        return res.status(ERROR_CODE_VALID).send({message: 'Переданы некорректные данные'})
+      }
+      res.status(ERROR_CODE_DEFAULT).send({message: 'Произошла ошибка'})
+    })
 };
 
 module.exports.findAllCard = (req, res) => {
   Card.find({})
     .then(cards => res.status(200).send({ data: cards }))
-    .catch(err => res.status(500).send({message: 'Произошла ошибка'}))
+    .catch((err) => {
+      if(err.name === "notFoundError") {
+        return res.status(ERROR_CODE_NOT_FOUND).send({message: 'Карточка не найдена'})
+      }
+      res.status(ERROR_CODE_DEFAULT).send({message: 'Произошла ошибка'})
+    })
 };
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then(card => res.send({ data: card }))
-    .catch(err => res.status(500).send({message: 'Произошла ошибка'}))
+    .catch((err) => {
+      if(err.name === "notFoundError") {
+        return res.status(ERROR_CODE_NOT_FOUND).send({message: 'Карточка не найдена'})
+      }
+      res.status(ERROR_CODE_DEFAULT).send({message: 'Произошла ошибка'})
+    })
+};
+
+module.exports.addLike = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+    { new: true }
+  )
+  .then(card => res.status(200).send({ data: card }))
+  .catch((err) => {
+    if(err.name === "notFoundError") {
+      return res.status(ERROR_CODE_NOT_FOUND).send({message: 'Карточка не найдена'})
+    }
+    res.status(ERROR_CODE_DEFAULT).send({message: 'Произошла ошибка'})
+  })
+};
+
+module.exports.deleteLike = (req, res) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } }, // убрать _id из массива
+    { new: true }
+  )
+  .then(card => res.status(200).send({ data: card }))
+  .catch((err) => {
+    if(err.name === "notFoundError") {
+      return res.status(ERROR_CODE_NOT_FOUND).send({message: 'Карточка не найдена'})
+    }
+    res.status(ERROR_CODE_DEFAULT).send({message: 'Произошла ошибка'})
+  })
 };

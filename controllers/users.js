@@ -27,6 +27,12 @@ module.exports.findAllUser = (req, res) => {
 module.exports.findByIdUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => res.status(200).send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Пользователь не найден' });
+      }
+      return res.status(200).send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Пользователь не найден' });

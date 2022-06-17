@@ -6,10 +6,10 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'validationError') {
+      if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_VALID).send({ message: 'Переданы некорректные данные' });
       }
-      return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
+      return res.status(ERROR_CODE_DEFAULT).send({ message: err });
     });
 };
 
@@ -17,7 +17,7 @@ module.exports.findAllUser = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send({ data: users }))
     .catch((err) => {
-      if (err.name === 'notFoundError') {
+      if (err.name === 'CastError') {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Пользователь не найден' });
       }
       return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
@@ -28,10 +28,10 @@ module.exports.findByIdUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'notFoundError') {
+      if (err.name === 'CastError') {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Пользователь не найден' });
       }
-      return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
+      return res.status(ERROR_CODE_DEFAULT).send({ message: err });
     });
 };
 
@@ -47,7 +47,7 @@ module.exports.updateProfile = (req, res) => {
   )
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'validationError') {
+      if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_VALID).send({ message: 'Переданы некорректные данные' });
       }
       return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
@@ -66,7 +66,7 @@ module.exports.updateAvatar = (req, res) => {
   )
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'validationError') {
+      if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_VALID).send({ message: 'Переданы некорректные данные' });
       }
       return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });

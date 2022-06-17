@@ -6,7 +6,7 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'validationError') {
+      if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE_VALID).send({ message: 'Переданы некорректные данные' });
       }
       return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
@@ -17,7 +17,7 @@ module.exports.findAllCard = (req, res) => {
   Card.find({})
     .then((cards) => res.status(200).send({ data: cards }))
     .catch((err) => {
-      if (err.name === 'notFoundError') {
+      if (err.name === 'CastError') {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
       return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
@@ -26,9 +26,14 @@ module.exports.findAllCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => res.send({ data: card }))
+    .then((card) => {
+      if (!card) {
+        return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
+      }
+      return res.send({ data: card });
+    })
     .catch((err) => {
-      if (err.name === 'notFoundError') {
+      if (err.name === 'CastError') {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
       return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
@@ -41,9 +46,14 @@ module.exports.addLike = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .then((card) => res.status(200).send({ data: card }))
+    .then((card) => {
+      if (!card) {
+        return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
+      }
+      return res.send({ data: card });
+    })
     .catch((err) => {
-      if (err.name === 'notFoundError') {
+      if (err.name === 'CastError') {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
       return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
@@ -56,9 +66,14 @@ module.exports.deleteLike = (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-    .then((card) => res.status(200).send({ data: card }))
+    .then((card) => {
+      if (!card) {
+        return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
+      }
+      return res.send({ data: card });
+    })
     .catch((err) => {
-      if (err.name === 'notFoundError') {
+      if (err.name === 'CastError') {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
       return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });

@@ -1,38 +1,38 @@
 const User = require('../models/user');
-const { ERROR_CODE_VALID, ERROR_CODE_NOT_FOUND, ERROR_CODE_DEFAULT, defaultError } = require('../error');
+const { ERROR_CODE_VALID, ERROR_CODE_NOT_FOUND, ERROR_CODE_DEFAULT } = require('../error');
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then(user => res.status(200).send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if(err.name === "validationError") {
-        return res.status(ERROR_CODE_VALID).send({message: 'Переданы некорректные данные'})
+      if (err.name === 'validationError') {
+        return res.status(ERROR_CODE_VALID).send({ message: 'Переданы некорректные данные' });
       }
-      res.status(ERROR_CODE_DEFAULT).send({message: 'Произошла ошибка'})
-    })
+      return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
+    });
 };
 
 module.exports.findAllUser = (req, res) => {
   User.find({})
-    .then(users => res.status(200).send({ data: users }))
+    .then((users) => res.status(200).send({ data: users }))
     .catch((err) => {
-      if(err.name === "notFoundError") {
-        return res.status(ERROR_CODE_NOT_FOUND).send({message: 'Пользователь не найден'})
+      if (err.name === 'notFoundError') {
+        return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Пользователь не найден' });
       }
-      res.status(ERROR_CODE_DEFAULT).send({message: 'Произошла ошибка'})
-    })
+      return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
+    });
 };
 
 module.exports.findByIdUser = (req, res) => {
   User.findById(req.params.userId)
-    .then(user => res.status(200).send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if(err.name === "notFoundError") {
-        return res.status(ERROR_CODE_NOT_FOUND).send({message: 'Пользователь не найден'})
+      if (err.name === 'notFoundError') {
+        return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Пользователь не найден' });
       }
-      res.status(ERROR_CODE_DEFAULT).send({message: 'Произошла ошибка'})
-    })
+      return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
+    });
 };
 
 module.exports.updateProfile = (req, res) => {
@@ -42,16 +42,16 @@ module.exports.updateProfile = (req, res) => {
     { name, about },
     {
       new: true,
-      runValidators: true
-    }
+      runValidators: true,
+    },
   )
-  .then(user => res.status(200).send({ data: user }))
-  .catch((err) => {
-    if(err.name === "validationError") {
-      return res.status(ERROR_CODE_VALID).send({message: 'Переданы некорректные данные'})
-    }
-    res.status(ERROR_CODE_DEFAULT).send({message: 'Произошла ошибка'})
-  })
+    .then((user) => res.status(200).send({ data: user }))
+    .catch((err) => {
+      if (err.name === 'validationError') {
+        return res.status(ERROR_CODE_VALID).send({ message: 'Переданы некорректные данные' });
+      }
+      return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
+    });
 };
 
 module.exports.updateAvatar = (req, res) => {
@@ -61,16 +61,14 @@ module.exports.updateAvatar = (req, res) => {
     { avatar },
     {
       new: true,
-      runValidators: true
-    }
+      runValidators: true,
+    },
   )
-  .then(user => res.status(200).send({ data: user }))
-  .catch((err) => {
-    if(err.name === "validationError") {
-      return res.status(ERROR_CODE_VALID).send({message: 'Переданы некорректные данные'})
-    }
-    res.status(ERROR_CODE_DEFAULT).send({message: 'Произошла ошибка'})
-  })
+    .then((user) => res.status(200).send({ data: user }))
+    .catch((err) => {
+      if (err.name === 'validationError') {
+        return res.status(ERROR_CODE_VALID).send({ message: 'Переданы некорректные данные' });
+      }
+      return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
+    });
 };
-
-

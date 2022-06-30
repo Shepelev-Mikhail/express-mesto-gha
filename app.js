@@ -3,7 +3,12 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const routerUser = require('./routes/users');
 const routerCard = require('./routes/cards');
+const auth = require('./middlewares/auth');
 const { ERROR_CODE_NOT_FOUND } = require('./error');
+const {
+  createUser,
+  login,
+} = require('./controllers/users');
 
 const { PORT = 3000 } = process.env;
 
@@ -13,18 +18,11 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// захардокили id пользователя
-app.use((req, res, next) => {
-  req.user = {
-    _id: '62ab819167cafe22de0f3664',
-  };
-
-  next();
-});
-
 // подключение роутов
-app.use('/', routerUser);
-app.use('/', routerCard);
+app.post('/signin', login);
+app.post('/signup', createUser);
+app.use('/', auth, routerUser);
+app.use('/', auth, routerCard);
 
 // роут на несуществующую страницу
 app.use((req, res, next) => {

@@ -1,6 +1,9 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { ERROR_CODE_VALID, ERROR_CODE_NOT_FOUND, ERROR_CODE_DEFAULT } = require('../error');
+
+const SECRET_KEY = 'practikum_secret_key';
 
 // создание пользователя
 module.exports.createUser = (req, res) => {
@@ -89,5 +92,30 @@ module.exports.updateAvatar = (req, res) => {
         return res.status(ERROR_CODE_VALID).send({ message: 'Переданы некорректные данные пользователя' });
       }
       return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
+    });
+};
+
+module.exports.showUserInfo = (req, res) => {
+
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        SECRET_KEY,
+        { expiresIn: '7d' },
+      );
+      res.send({ token });
+      // res.cookie('jwt', token, {
+      //   httpOnly: true,
+      // })
+      //   .end();
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
     });
 };

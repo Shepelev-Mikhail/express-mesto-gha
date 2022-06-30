@@ -96,7 +96,9 @@ module.exports.updateAvatar = (req, res) => {
 };
 
 module.exports.showUserInfo = (req, res) => {
-
+  User.findById(req.user._id)
+    .then((user) => res.send(user))
+    .catch(() => res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.login = (req, res) => {

@@ -23,12 +23,20 @@ module.exports.findAllCard = (req, res) => {
 
 // удалить карточку
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  const removeCard = () => {
+    Card.findByIdAndRemove(req.params.cardId)
+      .then((card) => res.send(card));
+  };
+
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Карточка с указанным id не найдена' });
       }
-      return res.send(card);
+      if (card.owner.toString() !== req.user._id) {
+        return res.send({ message: 'Вы не являетесь владельцем карточки' });
+      }
+      removeCard();
     })
     .catch((err) => {
       if (err.name === 'CastError') {

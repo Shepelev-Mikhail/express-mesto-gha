@@ -28,10 +28,10 @@ module.exports.findAllCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   const removeCard = () => {
     Card.findByIdAndRemove(req.params.cardId)
-      .then((card) => res.send(card))
-      // .catch(() => {
-      //   res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
-      // });
+      .then((card) => res.send(card));
+    // .catch(() => {
+    //   res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
+    // });
   };
 
   Card.findById(req.params.cardId)
@@ -44,7 +44,7 @@ module.exports.deleteCard = (req, res) => {
       if (card.owner.toString() !== req.user._id) {
         return res.send({ message: 'Вы не являетесь владельцем карточки' });
       }
-      removeCard();
+      return removeCard();
     })
     .catch((err) => {
       if (err.name === 'CastError') {

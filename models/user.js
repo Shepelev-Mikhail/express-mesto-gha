@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-// const validator = require('validator');
+const validator = require('validator');
 const UnauthorizedError = require('../errors/UnauthorizedError');
-// const { default: isEmail } = require('validator/lib/isEmail');
-// const regex = /(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])/gi;
+
+const regex = /(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/gi;
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -21,23 +21,23 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    // validate: {
-    //   validator(password) {
-    //     return regex.test(password);
-    //   },
-    //   message: 'Пароль некорректен'
-    // }
+    validate: {
+      validator(password) {
+        return regex.test(password);
+      },
+      message: 'Пароль некорректен',
+    },
   },
   email: {
     type: String,
     required: true,
     unique: true,
-    // validate: {
-    //   validator(email) {
-    //     return validator.isEmail(email)
-    //   },
-    //   message: 'Емайл некорректен'
-    // }
+    validate: {
+      validator(email) {
+        return validator.isEmail(email);
+      },
+      message: 'Емайл некорректен',
+    },
   },
   password: {
     type: String,

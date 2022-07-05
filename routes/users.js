@@ -9,6 +9,12 @@ const {
   showUserInfo,
 } = require('../controllers/users');
 
+// router.get('/users', findAllUser);
+// router.get('/users/me', showUserInfo);
+// router.get('/users/:userId', findByIdUser);
+// router.patch('/users/me', updateProfile);
+// router.patch('/users/me/avatar', updateAvatar);
+
 router.get('/users', findAllUser);
 router.get('/users/me', showUserInfo);
 router.get('/users/:userId', celebrate({
@@ -17,13 +23,13 @@ router.get('/users/:userId', celebrate({
   }),
 }), findByIdUser);
 router.patch('/users/me', celebrate({
-  params: Joi.object().keys({
+  body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
     about: Joi.string().min(2).max(30).required(),
   }),
 }), updateProfile);
 router.patch('/users/me/avatar', celebrate({
-  params: Joi.object().keys({
+  body: Joi.object().keys({
     avatar: Joi.string().required(),
   }),
 }), updateAvatar);

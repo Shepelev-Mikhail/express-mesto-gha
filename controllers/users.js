@@ -105,11 +105,13 @@ module.exports.updateAvatar = (req, res, next) => {
     });
 };
 
+// показать информацию о пользователе
 module.exports.showUserInfo = (req, res) => {
   User.findById(req.user._id)
     .then((user) => res.send(user));
 };
 
+// вход
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -124,10 +126,6 @@ module.exports.login = (req, res, next) => {
         { expiresIn: '7d' },
       );
       res.send({ token });
-      // res.cookie('jwt', token, {
-      //   httpOnly: true,
-      // })
-      //   .end();
     })
     .catch((err) => {
       res.status(401).send({ message: err.message });

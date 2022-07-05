@@ -49,8 +49,10 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
 });
 
+// обработка ошибок селебрейта
 app.use(errors());
 
+// обработка ошибок
 app.use((err, req, res, next) => {
   if (err.statusCode) {
     return res.status(err.statusCode).send({ message: err.message });

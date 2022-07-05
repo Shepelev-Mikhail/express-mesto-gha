@@ -130,6 +130,6 @@ module.exports.login = (req, res, next) => {
       //   .end();
     })
     .catch((err) => {
-      res.send({ message: err.message });
+      res.status(401).send({ message: err.message });
     });
 };

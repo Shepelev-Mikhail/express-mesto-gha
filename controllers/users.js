@@ -1,7 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { ERROR_CODE_VALID, ERROR_CODE_NOT_FOUND, ERROR_CODE_DEFAULT } = require('../error');
+const ValidError = require('../errors/ValidError');
+const ConflictEmailError = require('../errors/ConflictEmailError');
+const NotFoundError = require('../errors/NotFoundError');
 
 const SECRET_KEY = 'practikum_secret_key';
 
@@ -14,6 +16,11 @@ module.exports.createUser = (req, res) => {
     email,
     password,
   } = req.body;
+
+  if (!email || !password) {
+    throw new ValidError('Не указан Email или пароль');
+  }
+
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name,
@@ -24,18 +31,26 @@ module.exports.createUser = (req, res) => {
     }))
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE_VALID).send({ message: 'Переданы некорректные данные пользователя' });
+      if (err.code === 11000) {
+        // const error = new Error('Email занят');
+        // error.statusCode = 409;
+        // throw error;
+        throw new ConflictEmailError('Email занят');
       }
-      return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
+      if (err.name === 'ValidationError') {
+        // return res.status(ERROR_CODE_VALID)
+        //   .send({ message: 'Переданы некорректные данные пользователя' });
+        throw new ValidError('Переданы некорректные данные пользователя');
+      }
+      // return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });
 };
 
 // найти всех пользователей
 module.exports.findAllUser = (req, res) => {
   User.find({})
-    .then((users) => res.send(users))
-    .catch(() => res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' }));
+    .then((users) => res.send(users));
+  // .catch(() => res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' }));
 };
 
 // найти пользователя по айди
@@ -43,15 +58,19 @@ module.exports.findByIdUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        return res.status(ERROR_CODE_NOT_FOUND).send({ message: 'Пользователь с указанным id не найден' });
+        // return res.status(ERROR_CODE_NOT_FOUND)
+        //   .send({ message: 'Пользователь с указанным id не найден' });
+        throw new NotFoundError('Пользователь с указанным id не найден');
       }
       return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(ERROR_CODE_VALID).send({ message: 'Передан некорректный id пользователя' });
+        // return res.status(ERROR_CODE_VALID)
+        //   .send({ message: 'Передан некорректный id пользователя' });
+        throw new ValidError('Передан некорректный id пользователя');
       }
-      return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
+      // return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -69,9 +88,11 @@ module.exports.updateProfile = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE_VALID).send({ message: 'Переданы некорректные данные пользователя' });
+        // return res.status(ERROR_CODE_VALID)
+        //   .send({ message: 'Переданы некорректные данные пользователя' });
+        throw new ValidError('Переданы некорректные данные пользователя');
       }
-      return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
+      // return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -89,20 +110,25 @@ module.exports.updateAvatar = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE_VALID).send({ message: 'Переданы некорректные данные пользователя' });
+        // return res.status(ERROR_CODE_VALID)
+        //   .send({ message: 'Переданы некорректные данные пользователя' });
+        throw new ValidError('Переданы некорректные данные пользователя');
       }
-      return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
+      // return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });
 };
 
 module.exports.showUserInfo = (req, res) => {
   User.findById(req.user._id)
-    .then((user) => res.send(user))
-    .catch(() => res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' }));
+    .then((user) => res.send(user));
+  // .catch(() => res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    throw new ValidError('Не указан Email или пароль');
+  }
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -118,6 +144,6 @@ module.exports.login = (req, res) => {
       //   .end();
     })
     .catch((err) => {
-      res.status(401).send({ message: err.message });
+      res.send({ message: err.message });
     });
 };

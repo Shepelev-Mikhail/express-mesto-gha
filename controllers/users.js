@@ -29,20 +29,19 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send(user))
+    .then((user) => res.send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      email: user.email,
+    }))
     .catch((err) => {
       if (err.code === 11000) {
-        // const error = new Error('Email занят');
-        // error.statusCode = 409;
-        // throw error;
         next(new ConflictEmailError('Email занят'));
       }
       if (err.name === 'ValidationError') {
-        // return res.status(ERROR_CODE_VALID)
-        //   .send({ message: 'Переданы некорректные данные пользователя' });
         next(new ValidError('Переданы некорректные данные пользователя'));
       }
-      // return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -50,7 +49,6 @@ module.exports.createUser = (req, res, next) => {
 module.exports.findAllUser = (req, res) => {
   User.find({})
     .then((users) => res.send(users));
-  // .catch(() => res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' }));
 };
 
 // найти пользователя по айди
@@ -58,19 +56,14 @@ module.exports.findByIdUser = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        // return res.status(ERROR_CODE_NOT_FOUND)
-        //   .send({ message: 'Пользователь с указанным id не найден' });
         next(new NotFoundError('Пользователь с указанным id не найден'));
       }
       return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        // return res.status(ERROR_CODE_VALID)
-        //   .send({ message: 'Передан некорректный id пользователя' });
         next(new ValidError('Передан некорректный id пользователя'));
       }
-      // return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -88,22 +81,9 @@ module.exports.updateProfile = (req, res, next) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        // return res.status(ERROR_CODE_VALID)
-        //   .send({ message: 'Переданы некорректные данные пользователя' });
         next(new ValidError('Переданы некорректные данные пользователя'));
       }
-      // return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });
-
-  // .catch((err) => {
-  //   if (err.name === 'ValidationError') {
-  //     const error = new Error('Переданы некорректные данные пользователя');
-  //     error.statusCode = 400;
-  //     next(error);
-  //   }
-
-  //   next(err);
-  // });
 };
 
 // обновление аватара
@@ -120,18 +100,14 @@ module.exports.updateAvatar = (req, res, next) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        // return res.status(ERROR_CODE_VALID)
-        //   .send({ message: 'Переданы некорректные данные пользователя' });
         next(new ValidError('Переданы некорректные данные пользователя'));
       }
-      // return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });
 };
 
 module.exports.showUserInfo = (req, res) => {
   User.findById(req.user._id)
     .then((user) => res.send(user));
-  // .catch(() => res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.login = (req, res, next) => {

@@ -9,11 +9,8 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        // return res.status(ERROR_CODE_VALID)
-        //   .send({ message: 'Переданы некорректные данные карточки' });
         next(new ValidError('Переданы некорректные данные карточки'));
       }
-      // return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -21,7 +18,6 @@ module.exports.createCard = (req, res, next) => {
 module.exports.findAllCard = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards));
-  // .catch(() => res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' }));
 };
 
 // удалить карточку
@@ -29,16 +25,11 @@ module.exports.deleteCard = (req, res, next) => {
   const removeCard = () => {
     Card.findByIdAndRemove(req.params.cardId)
       .then((card) => res.send(card));
-    // .catch(() => {
-    //   res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
-    // });
   };
 
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        // return res.status(ERROR_CODE_NOT_FOUND)
-        //   .send({ message: 'Карточка с указанным id не найдена' });
         next(new NotFoundError('Карточка с указанным id не найдена'));
       }
       if (card.owner.toString() !== req.user._id) {
@@ -48,11 +39,8 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        // return res.status(ERROR_CODE_VALID)
-        //   .send({ message: 'Переданы некорректные данные карточки' });
         next(new ValidError('Переданы некорректные данные карточки'));
       }
-      // return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -65,19 +53,14 @@ module.exports.addLike = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        // return res.status(ERROR_CODE_NOT_FOUND)
-        //   .send({ message: 'Карточка с указанным id не найдена' });
         next(new NotFoundError('Карточка с указанным id не найдена'));
       }
       return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        // return res.status(ERROR_CODE_VALID)
-        //   .send({ message: 'Переданы некорректные данные карточки' });
         next(new ValidError('Переданы некорректные данные карточки'));
       }
-      // return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -90,18 +73,13 @@ module.exports.deleteLike = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        // return res.status(ERROR_CODE_NOT_FOUND)
-        //   .send({ message: 'Карточка с указанным id не найдена' });
         next(new NotFoundError('Карточка с указанным id не найдена'));
       }
       return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        // return res.status(ERROR_CODE_VALID)
-        //   .send({ message: 'Переданы некорректные данные карточки' });
         next(new ValidError('Переданы некорректные данные карточки'));
       }
-      // return res.status(ERROR_CODE_DEFAULT).send({ message: 'Произошла ошибка' });
     });
 };

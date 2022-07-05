@@ -20,9 +20,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // подключение роутов
-// app.post('/signin', login);
-// app.post('/signup', createUser);
-
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -35,7 +32,7 @@ app.post('/signup', celebrate({
     password: Joi.string().required().min(2),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().regex(/(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/),
   }),
 }), createUser);
 app.use('/', auth, routerUser);

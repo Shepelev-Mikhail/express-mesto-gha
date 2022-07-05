@@ -33,7 +33,7 @@ module.exports.deleteCard = (req, res, next) => {
         next(new NotFoundError('Карточка с указанным id не найдена'));
       }
       if (card.owner.toString() !== req.user._id) {
-        return res.send({ message: 'Вы не являетесь владельцем карточки' });
+        return res.status(403).send({ message: 'Вы не являетесь владельцем карточки' });
       }
       return removeCard();
     })
@@ -73,13 +73,9 @@ module.exports.deleteLike = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        next(new NotFoundError('Карточка с указанным id не найдена'));
+        throw new NotFoundError('Карточка с указанным id не найдена');
       }
-      return res.send(card);
+      return res.send({ message: 'Карточка удалена' });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new ValidError('Переданы некорректные данные карточки'));
-      }
-    });
+    .catch(next);
 };

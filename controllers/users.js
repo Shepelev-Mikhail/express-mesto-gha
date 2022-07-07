@@ -40,20 +40,20 @@ module.exports.createUser = (req, res, next) => {
       if (err.code === 11000) {
         next(new ConflictEmailError('Email занят'));
         return;
-      } else if (err.name === 'ValidationError') {
+      }
+      if (err.name === 'ValidationError') {
         next(new ValidError('Переданы некорректные данные пользователя'));
         return;
-      } else {
-        next(err);
       }
+      next(err);
     });
 };
 
 // найти всех пользователей
-module.exports.findAllUser = (req, res) => {
+module.exports.findAllUser = (req, res, next) => {
   User.find({})
-    .then((users) => res.send(users))
-    .catch(err => next(err));
+    .then((users) => res.status(200).send(users))
+    .catch(next);
 };
 
 // найти пользователя по айди
@@ -64,15 +64,14 @@ module.exports.findByIdUser = (req, res, next) => {
         next(new NotFoundError('Пользователь с указанным id не найден'));
         return;
       }
-      return res.send(user);
+      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new ValidError('Передан некорректный id пользователя'));
         return;
-      } else {
-        next(err);
       }
+      next(err);
     });
 };
 
@@ -87,14 +86,13 @@ module.exports.updateProfile = (req, res, next) => {
       runValidators: true,
     },
   )
-    .then((user) => res.send(user))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidError('Переданы некорректные данные пользователя'));
         return;
-      } else {
-        next(err);
       }
+      next(err);
     });
 };
 
@@ -109,22 +107,21 @@ module.exports.updateAvatar = (req, res, next) => {
       runValidators: true,
     },
   )
-    .then((user) => res.send(user))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidError('Переданы некорректные данные пользователя'));
         return;
-      } else {
-        next(err);
       }
+      next(err);
     });
 };
 
 // показать информацию о пользователе
-module.exports.showUserInfo = (req, res) => {
+module.exports.showUserInfo = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) => res.send(user))
-    .catch(err => next(err));
+    .then((user) => res.status(200).send(user))
+    .catch(next);
 };
 
 // вход
@@ -135,17 +132,14 @@ module.exports.login = (req, res, next) => {
     return;
   }
 
-  return User.findUserByCredentials(email, password)
+  User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
         SECRET_KEY,
         { expiresIn: '7d' },
       );
-      res.send({ token });
+      res.status(200).send({ token });
     })
-    // .catch((err) => {
-    //   res.status(401).send({ message: err.message });
-    // });
-    .catch(err => next(err));
+    .catch(next);
 };

@@ -10,6 +10,7 @@ const {
   createUser,
   login,
 } = require('./controllers/users');
+const NotFoundError = require('./errors/NotFoundError');
 
 const { PORT = 3000 } = process.env;
 
@@ -40,8 +41,9 @@ app.use('/', auth, routerCard);
 
 // роут на несуществующую страницу
 app.use((req, res, next) => {
-  res.status(404).send({ message: 'Page not found' });
-  next();
+  // res.status(404).send({ message: 'Page not found' });
+  // next();
+  next(new NotFoundError('Page not found'));
 });
 
 // подключение монгоДБ

@@ -19,6 +19,7 @@ module.exports.createUser = (req, res, next) => {
 
   if (!email || !password) {
     next(new ValidError('Не указан Email или пароль'));
+    return;
   }
 
   bcrypt.hash(password, 10)
@@ -29,7 +30,7 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send({
+    .then((user) => res.status(201).send({
       name: user.name,
       about: user.about,
       avatar: user.avatar,
@@ -38,9 +39,12 @@ module.exports.createUser = (req, res, next) => {
     .catch((err) => {
       if (err.code === 11000) {
         next(new ConflictEmailError('Email занят'));
-      }
-      if (err.name === 'ValidationError') {
+        return;
+      } else if (err.name === 'ValidationError') {
         next(new ValidError('Переданы некорректные данные пользователя'));
+        return;
+      } else {
+        next(err);
       }
     });
 };
@@ -48,7 +52,8 @@ module.exports.createUser = (req, res, next) => {
 // найти всех пользователей
 module.exports.findAllUser = (req, res) => {
   User.find({})
-    .then((users) => res.send(users));
+    .then((users) => res.send(users))
+    .catch(err => next(err));
 };
 
 // найти пользователя по айди
@@ -57,12 +62,16 @@ module.exports.findByIdUser = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new NotFoundError('Пользователь с указанным id не найден'));
+        return;
       }
       return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new ValidError('Передан некорректный id пользователя'));
+        return;
+      } else {
+        next(err);
       }
     });
 };
@@ -82,6 +91,9 @@ module.exports.updateProfile = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidError('Переданы некорректные данные пользователя'));
+        return;
+      } else {
+        next(err);
       }
     });
 };
@@ -101,6 +113,9 @@ module.exports.updateAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ValidError('Переданы некорректные данные пользователя'));
+        return;
+      } else {
+        next(err);
       }
     });
 };
@@ -108,7 +123,8 @@ module.exports.updateAvatar = (req, res, next) => {
 // показать информацию о пользователе
 module.exports.showUserInfo = (req, res) => {
   User.findById(req.user._id)
-    .then((user) => res.send(user));
+    .then((user) => res.send(user))
+    .catch(err => next(err));
 };
 
 // вход
@@ -116,6 +132,7 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     next(new ValidError('Не указан Email или пароль'));
+    return;
   }
 
   return User.findUserByCredentials(email, password)
@@ -127,7 +144,8 @@ module.exports.login = (req, res, next) => {
       );
       res.send({ token });
     })
-    .catch((err) => {
-      res.status(401).send({ message: err.message });
-    });
+    // .catch((err) => {
+    //   res.status(401).send({ message: err.message });
+    // });
+    .catch(err => next(err));
 };

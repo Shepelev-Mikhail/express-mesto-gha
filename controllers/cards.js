@@ -39,7 +39,6 @@ module.exports.deleteCard = (req, res, next) => {
         return;
       }
       if (card.owner.toString() !== req.user._id) {
-        // res.status(403).send({ message: 'Вы не являетесь владельцем карточки' });
         next(new AccessError('Вы не являетесь владельцем карточки'));
         return;
       }

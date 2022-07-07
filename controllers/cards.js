@@ -1,7 +1,7 @@
 const Card = require('../models/card');
 const ValidError = require('../errors/ValidError');
 const NotFoundError = require('../errors/NotFoundError');
-const NoAccessError = require('../errors/NoAccessError');
+const NoAccessError = require('../errors/NoAccessError'); // проблема
 
 // создание карточки
 module.exports.createCard = (req, res, next) => {

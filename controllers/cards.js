@@ -1,7 +1,6 @@
 const Card = require('../models/card');
 const ValidError = require('../errors/ValidError');
 const NotFoundError = require('../errors/NotFoundError');
-const NoAccessError = require('../errors/NoAccessError');
 
 // создание карточки
 module.exports.createCard = (req, res, next) => {
@@ -39,8 +38,9 @@ module.exports.deleteCard = (req, res, next) => {
         return;
       }
       if (card.owner.toString() !== req.user._id) {
-        next(new NoAccessError('Вы не являетесь владельцем карточки'));
-        return;
+        res.status(403).send({ message: 'Вы не являетесь владельцем карточки' });
+        // next(new NoAccessError('Вы не являетесь владельцем карточки'));
+        // return;
       }
       removeCard();
     })

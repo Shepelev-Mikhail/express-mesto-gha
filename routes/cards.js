@@ -11,37 +11,37 @@ const {
 
 router.get('/cards', findAllCard);
 
-// router.post('/cards', celebrate({
-//   body: Joi.object().keys({
-//     name: Joi.string().required().min(2).max(30),
-//     link: Joi.string().required().regex(/(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/),
-//   }),
-// }), createCard);
+router.post('/cards', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    link: Joi.string().required().regex(/(http|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/),
+  }),
+}), createCard);
 
-// router.delete('/cards/:cardId', celebrate({
-//   params: Joi.object().keys({
-//     cardId: Joi.string().length(24).required(),
-//   }),
-// }), deleteCard);
+router.delete('/cards/:cardId', celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().length(24).required(),
+  }),
+}), deleteCard);
 
-// router.put('/cards/:cardId/likes', celebrate({
-//   params: Joi.object().keys({
-//     cardId: Joi.string().length(24).required(),
-//   }),
-// }), addLike);
+router.put('/cards/:cardId/likes', celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().length(24).required(),
+  }),
+}), addLike);
 
-// router.delete('/cards/:cardId/likes', celebrate({
-//   params: Joi.object().keys({
-//     cardId: Joi.string().length(24).required(),
-//   }),
-// }), deleteLike);
+router.delete('/cards/:cardId/likes', celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().length(24).required(),
+  }),
+}), deleteLike);
 
-router.post('/cards', createCard);
+// router.post('/cards', createCard);
 
-router.delete('/cards/:cardId', deleteCard);
+// router.delete('/cards/:cardId', deleteCard);
 
-router.put('/cards/:cardId/likes', addLike);
+// router.put('/cards/:cardId/likes', addLike);
 
-router.delete('/cards/:cardId/likes', deleteLike);
+// router.delete('/cards/:cardId/likes', deleteLike);
 
 module.exports = router;

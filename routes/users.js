@@ -32,10 +32,4 @@ router.patch('/users/me/avatar', celebrate({
   }),
 }), updateAvatar);
 
-// router.get('/users/:userId', findByIdUser);
-
-// router.patch('/users/me', updateProfile);
-
-// router.patch('/users/me/avatar', updateAvatar);
-
 module.exports = router;

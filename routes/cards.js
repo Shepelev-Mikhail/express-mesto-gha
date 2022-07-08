@@ -36,12 +36,4 @@ router.delete('/cards/:cardId/likes', celebrate({
   }),
 }), deleteLike);
 
-// router.post('/cards', createCard);
-
-// router.delete('/cards/:cardId', deleteCard);
-
-// router.put('/cards/:cardId/likes', addLike);
-
-// router.delete('/cards/:cardId/likes', deleteLike);
-
 module.exports = router;
